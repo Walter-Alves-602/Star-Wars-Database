@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+    </head>
+        <meta charset="utf-8">
+        <title>Star Wars DB</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="Jquery.js"> </script>
+    <head>
+    <body> 
+        <div class=realHeader>
+            <h2>
+                STAR WARS DATABASE
+            </h2>
+        </div>
+        <div class=barraDeBusca>
+            <label for="pesquisa">Select yoyr search type:</label>
+            <select name="pesquisa" id="pesquisaTipo")>
+                <option value="planets">Planets</option>
+                <option value="starships">Spaceships</option>
+                <option value="vehicles">Vehicles</option>
+                <option value="people">People</option>
+                <option value="films">Films </option>
+                <option value="species">Species</option>
+            </select>
+            <input type="text" id="termoPesquisa">
+
+            </input>
+            <button id="pesquisaBtt" onclick="pesquisar()">
+                <img src="imgs/search.png"> 
+                <h2 id="pesquisaBttText">search</h2>
+            </button>
+        </div>
+
+        <div class="resultados" id="resultadoContainer">
+            
+        </div>
+        
+    </body>
+    
+    <script type="text/javascript">
+        let pesquisado = []
+        let tipoStr = ""
+        let nomePesquisa = ""
+        let resultadoFormatado1 = []
+        let pesquisado2 = []
+        
+        function pesquisar(){
+            let tipo = document.getElementById("pesquisaTipo")
+            let tipoStr = tipo.options[tipo.selectedIndex].value
+            let nomePesquisa = document.getElementById("termoPesquisa").value
+            let pesquisado = []
+            let flag2 = 0
+            $(".resultados").empty()
+            APIreq =`https://swapi.dev/api/${tipoStr}/?search=${nomePesquisa}`
+            console.log(APIreq),
+            $.ajax(APIreq,{
+                method:"GET",
+                success:(response)=>{
+                    pesquisado=response.results
+                    alcance = response.results.length
+                    console.log(pesquisado)
+                    
+                    for(let flag = 0; flag < pesquisado.length+1; flag++){
+                        transcreverPesquisa(pesquisado[flag],tipoStr,)
+                    }
+                }
+            })
+        }
+        
+        async function transcreverPesquisa(i,area){
+            let novoItem = {}
+            let mundo = []
+            switch(area){
+                case "planets":
+                    filmes = await Promise.all(i.films.map(pegarNomesFilme))
+                    residentes = await Promise.all(i.residents.map(pegarNomes))
+                
+                    novoItem.name = i.name
+                    novoItem.climate = i.climate
+                    novoItem.diameter = i.diameter
+                    novoItem.films = filmes
+                    novoItem.gravity = i.gravity
+                    novoItem.orbital_period = i.orbital_period
+                    novoItem.population = i.population
+                    novoItem.residents = residentes
+                    novoItem.rotation_period = i.rotation_period
+                    novoItem.terrain = i.terrain
+                    novoItem.surface_water = i.surface_water
+                    break
+
+                    case "starships":
+                    filmes = await Promise.all(i.films.map(pegarNomesFilme))
+                    pilotos = await Promise.all(i.pilots.map(pegarNomes))
+
+                    novoItem.name = i.name
+                    novoItem.mglt = i.mglt
+                    novoItem.cargo_capacity = i.cargo_capacity
+                    novoItem.consumables = i.consumables
+                    novoItem.cost_in_credits = i.cost_in_credits
+                    novoItem.crew = i.crew
+                    novoItem.films = filmes
+                    novoItem.hyperdrive_rating = i.hyperdrive_rating
+                    novoItem.length = i.length
+                    novoItem.manufacturer = i.manufacturer
+                    novoItem.mas_atmosphering_speed = i.mas_atmosphering_speed
+                    novoItem.model = i.model
+                    novoItem.passengers = i.passengers
+                    novoItem.pilots = pilotos
+                    novoItem.starship_class = i.starship_class
+                    break
+
+                    case "vehicles":
+                    filmes = await Promise.all(i.films.map(pegarNomesFilme))
+                    pilotos = await Promise.all(i.pilots.map(pegarNomes))
+
+                    novoItem.name = i.name
+                    novoItem.cargo_capacity = i.cargo_capacity
+                    novoItem.consumables = i.consumables
+                    novoItem.cost_in_credits = i.cost_in_credits
+                    novoItem.crew = i.crew
+                    novoItem.films = filmes
+                    novoItem.length = i.length
+                    novoItem.manufacturer = i.manufacturer
+                    novoItem.max_atmosphering_speed = i.max_atmosphering_speed
+                    novoItem.model = i.model
+                    novoItem.passengers = i.passengers
+                    novoItem.pilots = pilotos
+                    novoItem.vehicle_class = i.vehicle_class
+                    break
+
+                    case "people":
+                    filmes = await Promise.all(i.films.map(pegarNomesFilme))
+                    especies = await Promise.all(i.species.map(pegarNomes))
+                    veiculos = await Promise.all(i.vehicles.map(pegarNomes))
+                    naves = await Promise.all(i.starships.map(pegarNomes))
+            
+                    novoItem.name = i.name
+                    novoItem.height = i.height
+                    novoItem.mass = i.mass
+                    novoItem.hair_color = i.hair_color
+                    novoItem.skin_color = i.skin_color
+                    novoItem.eye_color = i.eye_color
+                    novoItem.birth_year = i.birth_year
+                    novoItem.gender = i.gender
+                    novoItem.films = filmes
+                    novoItem.species = especies
+                    novoItem.vehicles = veiculos
+                    novoItem.starships = naves
+                    break
+
+                    case "films":
+                    personagens = await Promise.all(i.characters.map(pegarNomes))
+                    planetas = await Promise.all(i.planets.map(pegarNomes))
+                    especies = await Promise.all(i.species.map(pegarNomes))
+                    veiculos = await Promise.all(i.vehicles.map(pegarNomes))
+                    naves = await Promise.all(i.starships.map(pegarNomes))
+            
+                    novoItem.title = i.title
+                    novoItem.characters = personagens
+                    novoItem.director = i.director
+                    novoItem.episode_id = i.episode_id
+                    novoItem.opening_crawl = i.opening_crawl
+                    novoItem.planets = planetas
+                    novoItem.producer = i.producer
+                    novoItem.release_date = i.release_date
+                    novoItem.species = especies
+                    novoItem.starships = naves
+                    novoItem.vehicles = veiculos
+                    break
+
+                    case "species":
+                    filmes = await Promise.all(i.films.map(pegarNomesFilme))
+                    personagens = await Promise.all(i.people.map(pegarNomes))
+                    
+                    novoItem.name = i.name
+                    novoItem.average_height = i.average_height
+                    novoItem.average_lifespan = i.average_lifespan
+                    novoItem.classification = i.classification
+                    novoItem.designation = i.designation
+                    novoItem.eye_colors = i.eye_colors
+                    novoItem.films = filmes
+                    novoItem.hair_colors = i.hair_colors
+                    novoItem.language = i.language
+                    novoItem.people = personagens
+                    novoItem.skin_colors = i.skin_colors
+                    break
+                }
+                console.log(novoItem)
+                novoItemLista = Object.entries(novoItem)
+                console.log(novoItemLista)
+                novoItemLista2 = novoItemLista.map(diagramarNovoItem)
+                function diagramarNovoItem(a){
+                    return `<p> ${a[0]} = ${a[1]} </p>` 
+                }
+                $('#resultadoContainer').append(`<div class=resultadosIner> ${novoItemLista2}`)
+
+
+                
+
+            async function pegarNomesFilme(e){
+                const filme = await $.ajax(e,{
+                    method:"GET"
+                })
+                return filme.title
+            }
+            async function pegarNomes(e){
+                const nome = await $.ajax(e,{
+                    method:"GET"
+                })
+                return nome.name
+            }
+        }
+
+
+
+        
+        //climate: "arid"
+        //diameter: "10465"
+        //films: (5) ['https://swapi.dev/api/films/1/', 'https://swapi.dev/api/films/3/', 'https://swapi.dev/api/films/4/', 'https://swapi.dev/api/films/5/', 'https://swapi.dev/api/films/6/']
+        //gravity: "1 standard"
+        //name: "Tatooine"
+        //orbital_period: "304"
+        //population: "200000"
+        //residents: (10) ['https://swapi.dev/api/people/1/', 'https://swapi.dev/api/people/2/', 'https://swapi.dev/api/people/4/', 'https://swapi.dev/api/people/6/', 'https://swapi.dev/api/people/7/', 'https://swapi.dev/api/people/8/', 'https://swapi.dev/api/people/9/', 'https://swapi.dev/api/people/11/', 'https://swapi.dev/api/people/43/', 'https://swapi.dev/api/people/62/']
+        //rotation_period: "23"
+        //terrain: "desert"
+        //surface_water: "1"
+
+
+
+//naves
+//MGLT: "60"
+//cargo_capacity: "3000000"
+//consumables: "1 year"
+//cost_in_credits: "3500000"
+//crew: "30-165"
+//films: (3) ['https://swapi.dev/api/films/1/', 'https://swapi.dev/api/films/3/', 'https://swapi.dev/api/films/6/']
+//hyperdrive_rating: "2.0"
+//length: "150"
+//manufacturer: "Corellian Engineering Corporation"
+//max_atmosphering_speed: "950"
+//model: "CR90 corvette"
+//name: "CR90 corvette"
+//passengers: "600"
+//pilots: []
+//starship_class: "corvette"
+
+
+//veiculo
+//cargo_capacity: "50000"
+//consumables: "2 months"
+//cost_in_credits: "150000"
+//crew: "46"
+//films: (2) ['https://swapi.dev/api/films/1/', 'https://swapi.dev/api/films/5/']
+//length: "36.8 "
+//manufacturer: "Corellia Mining Corporation"
+//max_atmosphering_speed: "30"
+//model: "Digger Crawler"
+//name: "Sand Crawler"
+//passengers: "30"
+//pilots: []
+//vehicle_class: "wheeled"
+
+//pessoas
+//{
+//    "name": "Luke Skywalker",
+//    "height": "172",
+//    "mass": "77",
+//    "hair_color": "blond",
+//    "skin_color": "fair",
+//    "eye_color": "blue",
+//    "birth_year": "19BBY",
+//    "gender": "male",
+//    "homeworld": "https://swapi.dev/api/planets/1/",
+//    "films": [
+//    "https://swapi.dev/api/films/1/",
+//    "https://swapi.dev/api/films/2/",
+//    "https://swapi.dev/api/films/3/",
+//    "https://swapi.dev/api/films/6/"
+//    ],
+//    "species": [],
+//    "vehicles": [
+//    "https://swapi.dev/api/vehicles/14/",
+//    "https://swapi.dev/api/vehicles/30/"
+//    ],
+//    "starships": [
+//    "https://swapi.dev/api/starships/12/",
+//    "https://swapi.dev/api/starships/22/"
+//    ],
+//}
+
+//filmes
+//characters: (18) ['https://swapi.dev/api/people/1/', 'https://swapi.dev/api/people/2/', 'https://swapi.dev/api/people/3/', 'https://swapi.dev/api/people/4/', 'https://swapi.dev/api/people/5/', 'https://swapi.dev/api/people/6/', 'https://swapi.dev/api/people/7/', 'https://swapi.dev/api/people/8/', 'https://swapi.dev/api/people/9/', 'https://swapi.dev/api/people/10/', 'https://swapi.dev/api/people/12/', 'https://swapi.dev/api/people/13/', 'https://swapi.dev/api/people/14/', 'https://swapi.dev/api/people/15/', 'https://swapi.dev/api/people/16/', 'https://swapi.dev/api/people/18/', 'https://swapi.dev/api/people/19/', 'https://swapi.dev/api/people/81/']
+//director: "George Lucas"
+//episode_id: 4
+//opening_crawl: "It is a period of civil war.\r\nRebel spaceships, striking\r\nfrom a hidden base, have won\r\ntheir first victory against\r\nthe evil Galactic Empire.\r\n\r\nDuring the battle, Rebel\r\nspies managed to steal secret\r\nplans to the Empire's\r\nultimate weapon, the DEATH\r\nSTAR, an armored space\r\nstation with enough power\r\nto destroy an entire planet.\r\n\r\nPursued by the Empire's\r\nsinister agents, Princess\r\nLeia races home aboard her\r\nstarship, custodian of the\r\nstolen plans that can save her\r\npeople and restore\r\nfreedom to the galaxy...."
+//planets: (3) ['https://swapi.dev/api/planets/1/', 'https://swapi.dev/api/planets/2/', 'https://swapi.dev/api/planets/3/']
+//producer: "Gary Kurtz, Rick McCallum"
+//release_date: "1977-05-25"
+//species: (5) ['https://swapi.dev/api/species/1/', 'https://swapi.dev/api/species/2/', 'https://swapi.dev/api/species/3/', 'https://swapi.dev/api/species/4/', 'https://swapi.dev/api/species/5/']
+//starships: (8) ['https://swapi.dev/api/starships/2/', 'https://swapi.dev/api/starships/3/', 'https://swapi.dev/api/starships/5/', 'https://swapi.dev/api/starships/9/', 'https://swapi.dev/api/starships/10/', 'https://swapi.dev/api/starships/11/', 'https://swapi.dev/api/starships/12/', 'https://swapi.dev/api/starships/13/']
+//title: "A New Hope"
+//vehicles: (4) ['https://swapi.dev/api/vehicles/4/', 'https://swapi.dev/api/vehicles/6/', 'https://swapi.dev/api/vehicles/7/', 'https://swapi.dev/api/vehicles/8/']
+
+//especies
+//average_height: "180"
+//average_lifespan: "120"
+//classification: "mammal"
+//designation: "sentient"
+//eye_colors: "brown, blue, green, hazel, grey, amber"
+//films: (6) ['https://swapi.dev/api/films/1/', 'https://swapi.dev/api/films/2/', 'https://swapi.dev/api/films/3/', 'https://swapi.dev/api/films/4/', 'https://swapi.dev/api/films/5/', 'https://swapi.dev/api/films/6/']
+//hair_colors: "blonde, brown, black, red"
+//homeworld: "https://swapi.dev/api/planets/9/"
+//language: "Galactic Basic"
+//name: "Human"
+//people: (4) ['https://swapi.dev/api/people/66/', 'https://swapi.dev/api/people/67/', 'https://swapi.dev/api/people/68/', 'https://swapi.dev/api/people/74/']
+//skin_colors: "caucasian, black, asian, hispanic"
+
+    </script>
+</html>
